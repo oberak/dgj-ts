@@ -1,12 +1,15 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.css';
+import '@fortawesome/fontawesome-free/css/all.css';
 
 import App from './App';
 import router from './router';
 import store from './store';
 
-Vue.use(Vuetify);
+Vue.use(Vuetify, {
+  iconfont: 'fa',
+});
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'));
 Vue.config.productionTip = false;
 
