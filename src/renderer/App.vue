@@ -183,7 +183,7 @@
       rightDrawer: false,
       title: 'DGJ Truck Scale',
     }),
-  };
+  }
 </script>
 
 <style>

@@ -23,6 +23,9 @@ module.exports = {
     'import/extensions': 0,
     'import/newline-after-import': 0,
     'no-multi-assign': 0,
+    'no-console': ['warn', { allow: ['info','warn', 'error'] }],
+    'semi': ['error', 'never'],
+    'linebreak-style': 0,
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }
