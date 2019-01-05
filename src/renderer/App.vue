@@ -171,7 +171,7 @@
           icon: 'settings_applications',
           title: 'Setting',
           items: [
-            { title: 'General', to: '/settings' },
+            { title: 'General', to: '/settings/general' },
             { title: 'Weighing', to: '/settings/weighing' },
             { title: 'Communications', to: '/settings/communications' },
             { title: 'Devices', to: '/settings/devices' },
@@ -181,7 +181,7 @@
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'Vuetify.js',
+      title: 'DGJ Truck Scale',
     }),
   };
 </script>
