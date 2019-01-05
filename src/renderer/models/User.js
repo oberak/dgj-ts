@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt-nodejs');
-const dateformat = require('dateformat');
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt-nodejs')
+const dateformat = require('dateformat')
 
-const { Schema } = mongoose;
+const { Schema } = mongoose
 const User = new Schema({
   name: {
     type: String,
@@ -34,28 +34,28 @@ const User = new Schema({
     type: Date,
     default: Date.now,
   },
-});
+})
 
 /**
  * Hashing a password
  * before saving it to the database
  */
 User.pre('save', (next) => {
-  this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(8), null);
-  next();
-});
+  this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(8), null)
+  next()
+})
 
 /**
  * Virtual field: updated date
  * @return {string} [description]
  */
-User.virtual('updated_date').get(() => dateformat(this.updated, 'dd/mm/yyyy HH:MM'));
+User.virtual('updated_date').get(() => dateformat(this.updated, 'dd/mm/yyyy HH:MM'))
 
 /**
  * Virtual field: inserted date
  * @return {string} [description]
  */
-User.virtual('inserted_date').get(() => dateformat(this.inserted, 'dd/mm/yyyy HH:MM'));
+User.virtual('inserted_date').get(() => dateformat(this.inserted, 'dd/mm/yyyy HH:MM'))
 
 /**
  * Compare encrypted data
@@ -63,7 +63,7 @@ User.virtual('inserted_date').get(() => dateformat(this.inserted, 'dd/mm/yyyy HH
  * @param  {string} encrypted [description]
  * @return {boolean}           [description]
  */
-User.statics.compare = (cleartext, encrypted) => bcrypt.compareSync(cleartext, encrypted);
+User.statics.compare = (cleartext, encrypted) => bcrypt.compareSync(cleartext, encrypted)
 
 /**
  * Create user
@@ -74,10 +74,10 @@ User.statics.create = (name, id, password, role = 'USER') => {
     id,
     password,
     role,
-  });
-  return user.save();
-};
+  })
+  return user.save()
+}
 
-User.statics.findOneById = id => this.findOne({ id }).exec();
+User.statics.findOneById = id => this.findOne({ id }).exec()
 
-module.exports = mongoose.model('Users', User);
+module.exports = mongoose.model('Users', User)
