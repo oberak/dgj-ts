@@ -26,6 +26,7 @@ module.exports = {
     'no-console': ['warn', { allow: ['info','warn', 'error'] }],
     'semi': ['error', 'never'],
     'linebreak-style': 0,
+    'no-plusplus': 0,
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }
