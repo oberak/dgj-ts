@@ -24,6 +24,7 @@
           <button class="alt" @click="open('https://electron.atom.io/docs/')">Electron</button>
           <button class="alt" @click="open('https://vuejs.org/v2/guide/')">Vue.js</button>
         </div>
+        <weight-display></weight-display>
       </div>
     </main>
   </div>
@@ -31,10 +32,11 @@
 
 <script>
   import SystemInformation from './LandingPage/SystemInformation'
+  import WeightDisplay from './DashboardPage/WeightDisplay'
 
-export default {
+  export default {
     name: 'landing-page',
-    components: { SystemInformation },
+    components: { SystemInformation, WeightDisplay },
     methods: {
       open(link) {
         this.$electron.shell.openExternal(link)

@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from 'electron' // eslint-disable-line
-import '../renderer/store'
+import store from '../renderer/store'
 
 /**
  * Set `__static` path to static files in production
@@ -43,6 +43,21 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+// TODO remove: this is sample data for store test
+app.on('ready', () => {
+  setInterval(() => {
+    const wt = Math.round(Math.random() * 10000)
+    let st = (wt % 2 === 0) ? 'stable' : 'unstable'
+    if (wt > 6000) st = 'overload'
+    store.dispatch('setweight', {
+      mcNO: 10,
+      data: wt.toLocaleString(),
+      status: st,
+      unit: 'Kg',
+    })
+  }, 1000)
 })
 
 /**
