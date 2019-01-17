@@ -69,7 +69,7 @@ User.statics.compare = (cleartext, encrypted) => bcrypt.compareSync(cleartext, e
  * Create user
  */
 User.statics.create = (name, id, password, role = 'USER') => {
-  const user = this({
+  const user = new this({
     name,
     id,
     password,
@@ -80,4 +80,4 @@ User.statics.create = (name, id, password, role = 'USER') => {
 
 User.statics.findOneById = id => this.findOne({ id }).exec()
 
-module.exports = mongoose.model('Users', User)
+export default mongoose.model('Users', User)

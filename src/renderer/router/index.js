@@ -11,9 +11,9 @@ export default new Router({
       component: require('@/components/DashboardPage').default,
     },
     {
-      path: '/settings/general',
-      name: 'Settings',
-      component: require('@/components/SettingsPage').default,
+      path: '/manage/materials',
+      name: 'Clients',
+      component: require('@/components/Materials').default,
     },
     {
       path: '*',
