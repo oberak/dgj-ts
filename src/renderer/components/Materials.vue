@@ -14,7 +14,7 @@
     </v-card-title>
     <v-data-table
       :headers="headers"
-      :items="materials"
+      :items="items"
       :pagination.sync="pagination"
       :total-items="total"
       :loading="loading"
@@ -27,17 +27,33 @@
         <td class="text-xs-right">{{ props.item.price }}</td>
         <td class="text-xs-right">{{ props.item.discount }}</td>
         <td class="text-xs-left">{{ props.item.desc }}</td>
+        <td class="text-xs-center">
+          <v-icon
+            small
+            class="mr-2"
+            @click="editItem(props.item)"
+          >
+            edit
+          </v-icon>
+          <v-icon
+            small
+            @click="deleteItem(props.item)"
+          >
+            delete
+          </v-icon>
+        </td>
       </template>
     </v-data-table>
 
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-toolbar color="#26c6da" dark>
-        <v-toolbar-title>ADD MATERIAL</v-toolbar-title>
+        <v-toolbar-title>{{ popupTitle }}</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
       <v-card color="blue-grey darken-2" dark>
         <v-card-text>
           <v-form ref="form" v-model="valid">
+            <input type="hidden" v-model="form.id">
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12>
@@ -46,6 +62,7 @@
                     v-model="form.code"
                     :counter="4"
                     :rules="codeRules"
+                    ref="code"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12>
@@ -81,12 +98,11 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="dialog = false">Close</v-btn>
+          <v-btn color="blue darken-1" flat @click="close()">Close</v-btn>
           <v-btn color="blue darken-1" flat @click="add()">Save</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
-
+    </v-dialog><!-- add/modify dialog -->
     <v-snackbar
       :timeout="snackbar.timeOut"
       v-model="snackbar.act"
@@ -119,9 +135,11 @@ export default {
       { text: 'Price', value: 'price' },
       { text: 'Discount', value: 'dc.value' },
       { text: 'Description', value: 'desc' },
+      { text: 'Actions', value: 'name', sortable: false },
     ],
-    materials: [],
+    items: [],
     /* popup */
+    popupTitle: 'ADD MATERIAL',
     dialog: false,
     valid: false,
     form: {
@@ -148,16 +166,22 @@ export default {
       v => !!v || 'This value is required',
       v => (v && v.length <= 4) || 'This value must be less than 4 characters',
     ],
+    editIdx: -1,
   }),
   mounted() {
     this.select()
+  },
+  watch: {
+    editIdx: function (idx) {
+      this.popupTitle = (idx === -1) ? 'ADD MATERIAL' : 'MODIFY MATERIAL'
+    },
   },
   methods: {
     select() {
       this.loading = true
       const p = Material.select({})
       p.then((doc) => {
-        this.materials = doc
+        this.items = doc
         this.loading = false
       })
     },
@@ -167,15 +191,59 @@ export default {
       this.snackbar.color = color
       this.snackbar.timeOut = tm
     },
+    close() {
+      this.$refs.form.reset()
+      this.editIdx = -1
+      this.dialog = false
+    },
     add() {
       if (!this.$refs.form.validate()) return this.msg('Unvalid value', 'error', 1000)
-      Material.create(this.form).then(() => {
-        this.dialog = false
-        this.$refs.form.reset()
-        this.select()
-        return this.msg('Data saved...', 'success')
-      }).catch(err => this.msg(err.message, 'error', 5000))
+      if (this.editIdx === -1) { // ADD
+        Material.findOne({ code: this.form.code }).then((doc) => {
+          if (doc) {
+            this.$refs.code.focus()
+            return this.msg(`Material code - [${this.form.code}] already exists.`, 'error', 5000)
+          }
+          Material.create(this.form).then(() => {
+            this.dialog = false
+            this.close()
+            this.select()
+            return this.msg('Data saved...', 'success')
+          }).catch(err => this.msg(err.message, 'error', 5000))
+          return false
+        })
+      } else { // MODIFY
+        Material.update(this.form.id, this.form).then(() => {
+          this.dialog = false
+          this.close()
+          this.select()
+          return this.msg('Data updated...', 'success')
+        }).catch(err => this.msg(err.message, 'error', 5000))
+      }
       return false
+    },
+    editItem(item) {
+      this.editIdx = this.items.indexOf(item)
+      this.form = item
+      this.dialog = true
+    },
+    async deleteItem(item) {
+      try {
+        await this.$confirm({
+          message: 'Do you really delete this item?',
+          title: 'Confirmation',
+          okButton: 'Confirm',
+          cancelButton: 'Cancel',
+        })
+        Material.delete(item.id).then(() => {
+          this.close()
+          this.select()
+          return this.msg('Data deleted...', 'success')
+        })
+      } catch (err) {
+        return this.msg('Canceled...', 'success')
+      }
+      return true
     },
   },
 }

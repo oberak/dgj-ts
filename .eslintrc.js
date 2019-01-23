@@ -27,6 +27,7 @@ module.exports = {
     'semi': ['error', 'never'],
     'linebreak-style': 0,
     'no-plusplus': 0,
+    'object-shorthand': 0,
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }
